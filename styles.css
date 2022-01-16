@@ -1,0 +1,38 @@
+:root {
+    --calculator-position: 11%;
+}
+
+body {
+    margin: 0;
+}
+
+#calc_container{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    min-height: 100vh;
+}
+
+#calc_container > div {
+    padding: 50px;
+}
+
+#display {
+    grid-area: 2 / 2 / 4 / 5;
+    background-color: lightgray;
+}
+
+#buttons {
+    grid-area: 4 / 2 / 7 / 5;
+    background-color: darkgray;
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.button {
+    box-sizing: border-box;
+    width: 25%;
+    text-align: center;
+    border: 1px solid black;
+}
