@@ -1,5 +1,9 @@
 :root {
-    --calculator-position: 11%;
+    --button-color: darkgrey;
+    --button-border: 1px solid lightslategray;
+    --button-panel-color: grey;
+    --display-color: lightgray;
+    --font-size: 3vh;
 }
 
 body {
@@ -13,26 +17,34 @@ body {
     min-height: 100vh;
 }
 
-#calc_container > div {
-    padding: 50px;
-}
-
 #display {
     grid-area: 2 / 2 / 4 / 5;
-    background-color: lightgray;
+    font-size: 5vh;
+    background-color: var(--display-color);
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 30px;
+
 }
 
 #buttons {
     grid-area: 4 / 2 / 7 / 5;
-    background-color: darkgray;
+    background-color: var(--button-panel-color);
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-around;
     flex-wrap: wrap;
+    padding: 7px;
+    gap: 7px;
 }
 
 .button {
     box-sizing: border-box;
-    width: 25%;
-    text-align: center;
-    border: 1px solid black;
+    width: 19%;
+    background-color: var(--button-color);
+    border: var(--button-border);
+    font-size: var(--font-size);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
