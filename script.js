@@ -77,6 +77,38 @@ function popDisplay(e) {
     updateDisplay();
 }
 
+function equalsOperator(e) {
+    let processed = new Array();
+    let number = 0;
+
+    for (let index = 0; index < userInput.length; index++) {
+        let value = userInput[index];
+        if (!(isNaN(value)) && (index !== userInput.length - 1)) {
+            number *= 10;
+            number += value;
+        } else if (!(isNaN(value))) {
+            number *= 10;
+            number += value;
+            processed.push(number);
+            number = 0;
+        } else {
+            processed.push(number);
+            processed.push(value);
+            number = 0;
+        }
+    }
+
+    let total = processed.shift();
+    while (processed.length !== 0) {
+        let operator = processed.shift();
+        let b = processed.shift();
+        total = operate(operator, total, b);
+    }
+
+    userInput = total.toString().split('');
+    updateDisplay();
+}
+
 let buttons = document.querySelectorAll('.button');
 
 buttons.forEach(button => {
@@ -90,7 +122,7 @@ buttons.forEach(button => {
         } else if (button.id === 'button_B') {
             button.addEventListener('click', popDisplay);
         } else if (button.id === 'button_=') {
-            button.addEventListener('click', operate);
+            button.addEventListener('click', equalsOperator);
         }
         else {
             throw 'Unrecognized Function was clicked.';
@@ -99,9 +131,3 @@ buttons.forEach(button => {
         throw 'Unrecognized Button was clicked.';
     }
 });
-
-// Add a listening event to each button such that whenever
-// a button is clicked, it will add the appropriate value
-// into the queue.
-
-
