@@ -1,20 +1,5 @@
 let userInput = new Array();
 
-function equalsOperator(e) {
-
-    let processedInput = parseUserInput();
-
-    let total = processedInput.shift();
-    while (processedInput.length !== 0) {
-        let operator = processedInput.shift();
-        let b = processedInput.shift();
-        total = operate(operator, total, b);
-    }
-    
-    updateUserInput(total);
-    updateDisplay();
-}
-
 function parseUserInput() {
     let processedInput = new Array();
     let inputLength = userInput.length;
@@ -53,7 +38,7 @@ function appendNumButton(e) {
 
 function appendOperButton(e) {
     let operator = buttonOperMap.get(e.target.id);
-    let mathOperators = ['*', '-', '+', '/'];
+    let mathOperators = ['*', '-', '+', '/', '='];
     if (!userInput.some(input => mathOperators.includes(input))) {
         userInput.push(operator);
         updateDisplay();
@@ -68,7 +53,9 @@ function appendOperButton(e) {
         }
         
         updateUserInput(total);
-        userInput.push(operator);
+        if (operator !== '='){
+            userInput.push(operator);
+        }
         updateDisplay();
     }
 
@@ -147,11 +134,7 @@ buttons.forEach(button => {
     if (buttonNumMap.has(button.id)) {
         button.addEventListener('click', appendNumButton);
     } else if (buttonOperMap.has(button.id)) {
-        if (button.id === "button_=") {
-            button.addEventListener('click', equalsOperator);
-        } else {
-            button.addEventListener('click', appendOperButton);
-        }
+        button.addEventListener('click', appendOperButton);
     } else if (buttonFuncMap.has(button.id)) {
         if (button.id === 'button_C') {
             button.addEventListener('click', clearDisplay);
