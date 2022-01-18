@@ -19,6 +19,7 @@ function parseUserInput() {
     let processedInput = new Array();
     let inputLength = userInput.length;
     let number = 0;
+
     for (let index = 0; index < inputLength; index++) {
         let value = userInput[index];
         if (!(isNaN(value)) && (index !== inputLength - 1)) {
@@ -35,6 +36,7 @@ function parseUserInput() {
             number = 0;
         }
     }
+    
     return processedInput;
 }
 
