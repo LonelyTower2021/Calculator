@@ -36,7 +36,7 @@ function parseUserInput() {
             number = 0;
         }
     }
-    
+
     return processedInput;
 }
 
@@ -46,13 +46,32 @@ function updateUserInput(total) {
 }
 
 function appendNumButton(e) {
-    userInput.push(buttonNumMap.get(e.target.id));
+    let number = buttonNumMap.get(e.target.id);
+    userInput.push(number);
     updateDisplay();
 }
 
 function appendOperButton(e) {
-    userInput.push(buttonOperMap.get(e.target.id));
-    updateDisplay();
+    let operator = buttonOperMap.get(e.target.id);
+    let mathOperators = ['*', '-', '+', '/'];
+    if (!userInput.some(input => mathOperators.includes(input))) {
+        userInput.push(operator);
+        updateDisplay();
+    } else {
+        let processedInput = parseUserInput();
+
+        let total = processedInput.shift();
+        while (processedInput.length !== 0) {
+            let operator = processedInput.shift();
+            let b = processedInput.shift();
+            total = operate(operator, total, b);
+        }
+        
+        updateUserInput(total);
+        userInput.push(operator);
+        updateDisplay();
+    }
+
 }
 
 function updateDisplay() {
@@ -110,17 +129,17 @@ let buttonNumMap = new Map([
 let buttonOperMap = new Map([
     // ["button_(", "("],
     // ["button_)", ")"],
+    // ["button_.", "."],
     ["button_/", "/"],
     ["button_*", "*"],
     ["button_-", "-"],
-    // ["button_.", "."],
     ["button_+", "+"],
+    ["button_=", "="],
 ]);
 
 let buttonFuncMap = new Map([
     ["button_C", "C"],
     ["button_B", "B"],
-    ["button_=", "="],
 ]);
 
 let buttons = document.querySelectorAll('.button');
@@ -128,19 +147,18 @@ buttons.forEach(button => {
     if (buttonNumMap.has(button.id)) {
         button.addEventListener('click', appendNumButton);
     } else if (buttonOperMap.has(button.id)) {
-        button.addEventListener('click', appendOperButton);
+        if (button.id === "button_=") {
+            button.addEventListener('click', equalsOperator);
+        } else {
+            button.addEventListener('click', appendOperButton);
+        }
     } else if (buttonFuncMap.has(button.id)) {
         if (button.id === 'button_C') {
             button.addEventListener('click', clearDisplay);
-        } else if (button.id === 'button_B') {
+        } else {
             button.addEventListener('click', popDisplay);
-        } else if (button.id === 'button_=') {
-            button.addEventListener('click', equalsOperator);
-        }
-        else {
-            throw 'Unrecognized Function was clicked.';
         }
     } else {
-        throw 'Unrecognized Button was clicked.';
+        console.log(`Button: ${button.id} not recognized.`)
     }
 });
