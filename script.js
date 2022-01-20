@@ -1,5 +1,32 @@
 let userInput = new Array();
 
+function evaluateOperator(e) {
+    let operator = buttonOperMap.get(e.target.id);
+
+    if (userInput.length) {
+        if (!userInputHasOperator() && operator !== '=') {
+            userInput.push(operator);
+        } else if (userInputHasOperator() && isOperator(userInput.at(-1))) {
+            let error = document.querySelector('#error');
+            error.textContent = "Malformed expression.";
+        } else {
+            let processedInput = parseUserInput();
+            if (processedInput.length) {
+                let total = processedInput.shift();
+                while (processedInput.length !== 0) {
+                    let operator = processedInput.shift();
+                    let b = processedInput.shift();
+                    total = operate(operator, total, b);
+                }
+                
+                updateUserInput(total);
+                clearError();
+            }
+        }
+        updateDisplay();
+    }
+}
+
 function parseUserInput() {
     let processedInput = new Array();
     let inputLength = userInput.length;
@@ -42,49 +69,38 @@ function appendNumButton(e) {
     let number = buttonNumMap.get(e.target.id);
     userInput.push(number);
     updateDisplay();
+    clearError();
 }
 
-function evaluateOperator(e) {
-    let operator = buttonOperMap.get(e.target.id);
-    if (!inputHasOperator()) {
-        userInput.push(operator);
-    } else {
-        let processedInput = parseUserInput();
-
-        let total = processedInput.shift();
-        while (processedInput.length !== 0) {
-            let operator = processedInput.shift();
-            let b = processedInput.shift();
-            total = operate(operator, total, b);
-            console.log(total);
-        }
-        
-        updateUserInput(total);
-        if (operator !== '='){
-            userInput.push(operator);
-        }
-    }
-    updateDisplay();
+function isOperator(input) {
+    let mathOperators = ['*', '-', '+', '/'];
+    return mathOperators.includes(input);
 }
 
-function inputHasOperator() {
-    let mathOperators = ['*', '-', '+', '/', '='];
-    return userInput.some(input => mathOperators.includes(input))
+function userInputHasOperator() {
+    return userInput.some(input => isOperator(input))
 }
 
 function updateDisplay() {
-    let display = document.querySelector('#display')
-    display.textContent = userInput.join('');
+    let output = document.querySelector('#output')
+    output.textContent = userInput.join('');
+}
+
+function clearError() {
+    let error = document.querySelector('#error');
+    error.textContent = '';
 }
 
 function clearDisplay(e) {
     userInput.length = 0;
     updateDisplay();
+    clearError();
 }
 
 function popDisplay(e) {
     userInput.pop();
     updateDisplay();
+    clearError();
 }
 
 function add(a, b) {

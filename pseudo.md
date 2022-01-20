@@ -35,6 +35,9 @@ User clicks on Integer Button
 User clicks on Math Operator Button
     Click event fired for Button
     Get operator value of button from event
+    If operator is Equals Operator
+        Is User Input < 3?
+            Throw error / return
     If Operator flag is False
         Store math operator into User Input container
         Update display with User Input container values

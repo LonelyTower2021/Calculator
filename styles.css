@@ -20,13 +20,21 @@ body {
 #display {
     box-sizing: border-box;
     grid-area: 2 / 2 / 4 / 5;
-    font-size: 5vh;
     background-color: var(--display-color);
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
+    flex-direction: column-reverse;
     padding: 10px;
     min-width: 350px;
+}
+
+#output {
+    font-size: 5vh;
+    min-height: 5vh;
+}
+
+#error {
+    min-height: 3vh;
+    font-size: 2vh;
 }
 
 #buttons_panel {
