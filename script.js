@@ -8,21 +8,29 @@ function evaluateOperator(e) {
             userInput.push(operator);
         } else if (userInputHasOperator() && isOperator(userInput.at(-1))) {
             let error = document.querySelector('#error');
-            error.textContent = "Malformed expression.";
+            error.textContent = "Error: Malformed expression!";
         } else {
             let processedInput = parseUserInput();
             if (processedInput.length) {
+                console.log(processedInput);
                 let total = processedInput.shift();
-                while (processedInput.length !== 0) {
-                    let operator = processedInput.shift();
-                    let b = processedInput.shift();
+                let operator = processedInput.shift();
+                let b = processedInput.shift();
+                try {
                     total = operate(operator, total, b);
+
+                    updateUserInput(total);
+                    if (operator !== '=') {
+                        userInput.push(operator);
+                    }
+                    clearError();
+                } catch (err) {
+                    let error = document.querySelector('#error');
+                    error.textContent = "Error: Division by Zero!";
                 }
-                
-                updateUserInput(total);
-                clearError();
             }
         }
+
         updateDisplay();
     }
 }
@@ -62,7 +70,6 @@ function updateUserInput(total) {
             return parseInt(strNum)}
         }
     );
-    updateDisplay();
 }
 
 function appendNumButton(e) {
@@ -128,11 +135,15 @@ function operate(operator, a, b) {
     else if (operator === "-") {return subtract(a, b);}
     else if (operator === "*") {return multiply(a, b);}
     else if (operator === "/") {
-        let quotient = divide(a, b);
-        if (!Number.isInteger(quotient)) {
-            quotient = round(quotient, 6);
+        if (b === 0) {
+            throw new Error("Error: Division by Zero!");
+        } else {
+            let quotient = divide(a, b);
+            if (!Number.isInteger(quotient)) {
+                quotient = round(quotient, 6);
+            }
+            return quotient;
         }
-        return quotient;
     }
     else {return NaN}
 }
