@@ -26,7 +26,15 @@ function parseUserInput() {
 }
 
 function updateUserInput(total) {
-    userInput = total.toString().split('').map(strNum => parseInt(strNum));
+    let strTotal = total.toString();
+    let arrayTotal = strTotal.split('');
+    userInput = arrayTotal.map(strNum => {
+        if (strNum === '.') {
+            return '.';
+        } else {
+            return parseInt(strNum)}
+        }
+    );
     updateDisplay();
 }
 
@@ -36,12 +44,10 @@ function appendNumButton(e) {
     updateDisplay();
 }
 
-function appendOperButton(e) {
+function evaluateOperator(e) {
     let operator = buttonOperMap.get(e.target.id);
-    let mathOperators = ['*', '-', '+', '/', '='];
-    if (!userInput.some(input => mathOperators.includes(input))) {
+    if (!inputHasOperator()) {
         userInput.push(operator);
-        updateDisplay();
     } else {
         let processedInput = parseUserInput();
 
@@ -50,15 +56,20 @@ function appendOperButton(e) {
             let operator = processedInput.shift();
             let b = processedInput.shift();
             total = operate(operator, total, b);
+            console.log(total);
         }
         
         updateUserInput(total);
         if (operator !== '='){
             userInput.push(operator);
         }
-        updateDisplay();
     }
+    updateDisplay();
+}
 
+function inputHasOperator() {
+    let mathOperators = ['*', '-', '+', '/', '='];
+    return userInput.some(input => mathOperators.includes(input))
 }
 
 function updateDisplay() {
@@ -89,15 +100,30 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
-    return a / b;
+    if (b !== 0) {
+        return a / b;
+    } else {
+        throw "Division by zero";
+    }
 }
 
 function operate(operator, a, b) {
     if (operator === "+") {return add(a, b);}
     else if (operator === "-") {return subtract(a, b);}
     else if (operator === "*") {return multiply(a, b);}
-    else if (operator === "/") {return divide(a, b);}
+    else if (operator === "/") {
+        let quotient = divide(a, b);
+        if (!Number.isInteger(quotient)) {
+            quotient = round(quotient, 6);
+        }
+        return quotient;
+    }
     else {return NaN}
+}
+
+// Credit to https://www.jacklmoore.com/notes/rounding-in-javascript/
+function round(value, decimals) {
+    return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
 }
 
 let buttonNumMap = new Map([
@@ -134,7 +160,7 @@ buttons.forEach(button => {
     if (buttonNumMap.has(button.id)) {
         button.addEventListener('click', appendNumButton);
     } else if (buttonOperMap.has(button.id)) {
-        button.addEventListener('click', appendOperButton);
+        button.addEventListener('click', evaluateOperator);
     } else if (buttonFuncMap.has(button.id)) {
         if (button.id === 'button_C') {
             button.addEventListener('click', clearDisplay);

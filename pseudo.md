@@ -35,7 +35,7 @@ User clicks on Integer Button
 User clicks on Math Operator Button
     Click event fired for Button
     Get operator value of button from event
-    If top value of User Input container is Integer and the Operator flag is False
+    If Operator flag is False
         Store math operator into User Input container
         Update display with User Input container values
     If the top value is a Integer and the Operator flag is True
