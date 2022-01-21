@@ -71,3 +71,8 @@ What should happen when the User clicks multiple math operators?
     Error should appear/remain for each new operator
     Backspace or clear should clear error message
     Successfully completing a math operation should also clear error message
+
+
+[-][N][/*+-][-][N]
+
+if operator is minus, and it's either the first value or the value immediately after an operator, add a minus to user input

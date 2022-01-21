@@ -1,90 +1,53 @@
-let userInput = new Array();
+let a = '';
+let op = '';
+let b = '';
 
 function evaluateOperator(e) {
     let operator = buttonOperMap.get(e.target.id);
+    let error = document.querySelector('#error');
 
-    if (userInput.length) {
-        if (!userInputHasOperator() && operator !== '=') {
-            userInput.push(operator);
-        } else if (userInputHasOperator() && isOperator(userInput.at(-1))) {
-            let error = document.querySelector('#error');
-            error.textContent = "Error: Malformed expression!";
-        } else {
-            let processedInput = parseUserInput();
-            if (processedInput.length) {
-                let total = Number.parseFloat(processedInput.shift());
-                let op = processedInput.shift();
-                let b = Number.parseFloat(processedInput.shift());
-                try {
-                    let result = operate(op, total, b);
-                    updateUserInput(result);
-                    if (operator !== '=') {
-                        userInput.push(operator);
-                    }
-                    clearError();
-                } catch (err) {
-                    let error = document.querySelector('#error');
-                    error.textContent = "Error: Division by Zero!";
-                }
-            }
-
-        }
-
-        updateDisplay();
-    }
-}
-
-function parseUserInput() {
-    let processedInput = new Array();
-    let inputLength = userInput.length;
-    let number = '';
-
-    for (let index = 0; index < inputLength; index++) {
-        let value = userInput[index];
-        if (!(isNaN(value)) || value === '.') {
-            if (index === 0) {
-                number = value;
-            } else if (index !== inputLength - 1) {
-                number += value;
+    if (!a && operator === '-') {
+        a += '-';
+        clearError();
+    } else if (a && !isNaN(a) && operator !== '=' && !op) {
+        op = operator;
+    } else if (!b && operator === '-') {
+        b += '-';
+    } else if (b && !isNaN(b)) {
+        try {
+            let result = operate(op, Number.parseFloat(a), Number.parseFloat(b));
+            a = result.toString();
+            if (operator !== '=') {
+                op = operator;
             } else {
-                number += value;
-                processedInput.push(number);
-                number = '';
+                op = '';
             }
-        } else {
-            processedInput.push(number);
-            processedInput.push(value);
-            number = '';
+            b = '';
+            clearError();
+        } catch (err) {
+            error.textContent = 'Error: Division by Zero!';
         }
+    } else {
+        error.textContent = 'Error: Malformed Expression!';
     }
 
-    return processedInput;
-}
-
-function updateUserInput(total) {
-    let strTotal = total.toString();
-    userInput = strTotal.split('');
+    updateDisplay();
 }
 
 function appendNumButton(e) {
     let number = buttonNumMap.get(e.target.id);
-    userInput.push(number);
+    if (!op) {
+        a += number;
+    } else {
+        b += number;
+    }
     updateDisplay();
     clearError();
 }
 
-function isOperator(input) {
-    let mathOperators = ['*', '-', '+', '/'];
-    return mathOperators.includes(input);
-}
-
-function userInputHasOperator() {
-    return userInput.some(input => isOperator(input))
-}
-
 function updateDisplay() {
     let output = document.querySelector('#output')
-    output.textContent = userInput.join('');
+    output.textContent = a + op + b;
 }
 
 function clearError() {
@@ -93,46 +56,54 @@ function clearError() {
 }
 
 function clearDisplay(e) {
-    userInput.length = 0;
+    a = '';
+    op = '';
+    b = '';
     updateDisplay();
     clearError();
 }
 
 function popDisplay(e) {
-    userInput.pop();
+    if (b) {
+        b = b.slice(0, -1);
+    } else if (op) {
+        op = '';
+    } else {
+        a = a.slice(0, -1);
+    }
     updateDisplay();
     clearError();
 }
 
-function add(a, b) {
-    return a + b;
+function add(left, right) {
+    return left + right;
 }
 
-function subtract(a, b) {
-    return a - b;
+function subtract(left, right) {
+    return left - right;
 }
 
-function multiply(a, b) {
-    return a * b;
+function multiply(left, right) {
+    return left * right;
 }
 
-function divide(a, b) {
-    if (b !== 0) {
-        return a / b;
+function divide(left, right) {
+    if (right !== 0) {
+        return left / right;
     } else {
-        throw "Division by zero";
+        throw new Error("Division by zero");
     }
 }
 
-function operate(operator, a, b) {
-    if (operator === "+") {return add(a, b);}
-    else if (operator === "-") {return subtract(a, b);}
-    else if (operator === "*") {return multiply(a, b);}
+function operate(operator, left, right) {
+    if (operator === "+") {return add(left, right);}
+    else if (operator === "-") {return subtract(left, right);}
+    else if (operator === "*") {return multiply(left, right);}
     else if (operator === "/") {
-        if (b === 0) {
+        if (right === 0) {
             throw new Error("Error: Division by Zero!");
         } else {
-            let quotient = divide(a, b);
+            let quotient = divide(left, right);
             if (!Number.isInteger(quotient)) {
                 quotient = round(quotient, 6);
             }
@@ -161,9 +132,6 @@ let buttonNumMap = new Map([
 ]);
 
 let buttonOperMap = new Map([
-    // ["button_(", "("],
-    // ["button_)", ")"],
-    // ["button_.", "."],
     ["button_/", "/"],
     ["button_*", "*"],
     ["button_-", "-"],
