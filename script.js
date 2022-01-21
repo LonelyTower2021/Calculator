@@ -12,14 +12,12 @@ function evaluateOperator(e) {
         } else {
             let processedInput = parseUserInput();
             if (processedInput.length) {
-                console.log(processedInput);
-                let total = processedInput.shift();
-                let operator = processedInput.shift();
-                let b = processedInput.shift();
+                let total = Number.parseFloat(processedInput.shift());
+                let op = processedInput.shift();
+                let b = Number.parseFloat(processedInput.shift());
                 try {
-                    total = operate(operator, total, b);
-
-                    updateUserInput(total);
+                    let result = operate(op, total, b);
+                    updateUserInput(result);
                     if (operator !== '=') {
                         userInput.push(operator);
                     }
@@ -29,6 +27,7 @@ function evaluateOperator(e) {
                     error.textContent = "Error: Division by Zero!";
                 }
             }
+
         }
 
         updateDisplay();
@@ -38,22 +37,24 @@ function evaluateOperator(e) {
 function parseUserInput() {
     let processedInput = new Array();
     let inputLength = userInput.length;
-    let number = 0;
+    let number = '';
 
     for (let index = 0; index < inputLength; index++) {
         let value = userInput[index];
-        if (!(isNaN(value)) && (index !== inputLength - 1)) {
-            number *= 10;
-            number += value;
-        } else if (!(isNaN(value))) {
-            number *= 10;
-            number += value;
-            processedInput.push(number);
-            number = 0;
+        if (!(isNaN(value)) || value === '.') {
+            if (index === 0) {
+                number = value;
+            } else if (index !== inputLength - 1) {
+                number += value;
+            } else {
+                number += value;
+                processedInput.push(number);
+                number = '';
+            }
         } else {
             processedInput.push(number);
             processedInput.push(value);
-            number = 0;
+            number = '';
         }
     }
 
@@ -62,14 +63,7 @@ function parseUserInput() {
 
 function updateUserInput(total) {
     let strTotal = total.toString();
-    let arrayTotal = strTotal.split('');
-    userInput = arrayTotal.map(strNum => {
-        if (strNum === '.') {
-            return '.';
-        } else {
-            return parseInt(strNum)}
-        }
-    );
+    userInput = strTotal.split('');
 }
 
 function appendNumButton(e) {
@@ -154,16 +148,16 @@ function round(value, decimals) {
 }
 
 let buttonNumMap = new Map([
-    ["button_0", 0],
-    ["button_1", 1],
-    ["button_2", 2],
-    ["button_3", 3],
-    ["button_4", 4],
-    ["button_5", 5],
-    ["button_6", 6],
-    ["button_7", 7],
-    ["button_8", 8],
-    ["button_9", 9],
+    ["button_0", '0'],
+    ["button_1", '1'],
+    ["button_2", '2'],
+    ["button_3", '3'],
+    ["button_4", '4'],
+    ["button_5", '5'],
+    ["button_6", '6'],
+    ["button_7", '7'],
+    ["button_8", '8'],
+    ["button_9", '9'],
 ]);
 
 let buttonOperMap = new Map([
@@ -195,6 +189,5 @@ buttons.forEach(button => {
             button.addEventListener('click', popDisplay);
         }
     } else {
-        console.log(`Button: ${button.id} not recognized.`)
     }
 });
