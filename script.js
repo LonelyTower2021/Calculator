@@ -3,16 +3,26 @@ let op = '';
 let b = '';
 
 function evaluateOperator(e) {
+    clearError();
     let operator = buttonOperMap.get(e.target.id);
     let error = document.querySelector('#error');
+    let decimalFlag = false;
 
     if (!a && operator === '-') {
         a += '-';
         clearError();
-    } else if (a && !isNaN(a) && operator !== '=' && !op) {
+    } else if ((!a || a === '-') && operator === '.') {
+        a += "0."
+    } else if (a && !isNaN(a) && !op && operator === '.' && !a.includes('.')) {
+        a += '.';
+    } else if (a && !isNaN(a) && operator !== '=' && !op && operator !== '.') {
         op = operator;
     } else if (!b && operator === '-') {
         b += '-';
+    } else if ((!b || b === '-') && op && operator === '.') {
+        b += "0.";
+    } else if (b && !isNaN(b) && operator === '.' && !b.includes('.')) {
+        b += '.';
     } else if (b && !isNaN(b)) {
         try {
             let result = operate(op, Number.parseFloat(a), Number.parseFloat(b));
@@ -23,7 +33,6 @@ function evaluateOperator(e) {
                 op = '';
             }
             b = '';
-            clearError();
         } catch (err) {
             error.textContent = 'Error: Division by Zero!';
         }
@@ -96,21 +105,32 @@ function divide(left, right) {
 }
 
 function operate(operator, left, right) {
-    if (operator === "+") {return add(left, right);}
-    else if (operator === "-") {return subtract(left, right);}
-    else if (operator === "*") {return multiply(left, right);}
+    let result = 0;
+    if (operator === "+") {
+        result = add(left, right);
+    }
+    else if (operator === "-") {
+        result = subtract(left, right);
+    }
+    else if (operator === "*") {
+        result = multiply(left, right);
+    }
     else if (operator === "/") {
         if (right === 0) {
             throw new Error("Error: Division by Zero!");
         } else {
-            let quotient = divide(left, right);
-            if (!Number.isInteger(quotient)) {
-                quotient = round(quotient, 6);
-            }
-            return quotient;
+            result = divide(left, right);
         }
     }
-    else {return NaN}
+    else {
+        throw new Error("Unknown operator encountered!");
+    }
+
+    if (!Number.isInteger(result)) {
+        result = round(result, 6);
+    }
+    return result;
+
 }
 
 // Credit to https://www.jacklmoore.com/notes/rounding-in-javascript/
@@ -137,6 +157,7 @@ let buttonOperMap = new Map([
     ["button_-", "-"],
     ["button_+", "+"],
     ["button_=", "="],
+    ["button_.", "."],
 ]);
 
 let buttonFuncMap = new Map([
