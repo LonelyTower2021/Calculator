@@ -8,17 +8,19 @@ function appendOperator(e) {
     let error = document.querySelector('#error');
 
     if (operator === '-') {
-        appendMinus();
-    } else if ((!a || a === '-') && operator === '.') {
-        a += "."
-    } else if (a && !isNaN(a) && !op && operator === '.' && !a.includes('.')) {
-        a += '.';
-    } else if (a && !isNaN(a) && operator !== '=' && !op && operator !== '.' && a.at(-1) !== '.') {
+        try {
+            appendMinus();
+        } catch (err) {
+            error.textContent = err.message;
+        }
+    } else if (operator === '.') {
+        try {
+            appendDecimalSeparator();
+        } catch (err) {
+            error.textContent = err.message;
+        }
+    } else if (a && !isNaN(a) && operator !== '=' && !op && a.at(-1) !== '.') {
         op = operator;
-    } else if ((!b || b === '-') && op && operator === '.') {
-        b += ".";
-    } else if (b && !isNaN(b) && operator === '.' && !b.includes('.')) {
-        b += '.';
     } else if (b && !isNaN(b) && b.at(-1) !== '.') {
         evaluateExpression(operator);
     } else {
@@ -43,6 +45,20 @@ function evaluateExpression(operator) {
     }
 }
 
+function appendDecimalSeparator() {
+    if (!a || a === '-') {
+        a += '.';
+    } else if (!isNaN(a) && !op && !a.includes('.')) {
+        a += '.';
+    } else if (op && (!b || b === '-')) {
+        b += '.';
+    } else if (op && !isNaN(b) && !b.includes('.')) {
+        b += '.';
+    } else {
+        throw new Error("Error: Malformed Expression by Decimal Separator!")
+    }
+}
+
 function appendMinus() {
     if (!a) {
         a += '-';
@@ -53,7 +69,7 @@ function appendMinus() {
     } else if (!isNaN(b) && b.at(-1) !== '.') {
         evaluateExpression('-');
     } else {
-        throw new Error("Error: Malformed Expression cause by Minus!");
+        throw new Error("Error: Malformed Expression caused by Minus!");
     }
 }
 
