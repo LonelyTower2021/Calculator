@@ -6,24 +6,23 @@ function evaluateOperator(e) {
     clearError();
     let operator = buttonOperMap.get(e.target.id);
     let error = document.querySelector('#error');
-    let decimalFlag = false;
 
     if (!a && operator === '-') {
         a += '-';
         clearError();
     } else if ((!a || a === '-') && operator === '.') {
-        a += "0."
+        a += "."
     } else if (a && !isNaN(a) && !op && operator === '.' && !a.includes('.')) {
         a += '.';
-    } else if (a && !isNaN(a) && operator !== '=' && !op && operator !== '.') {
+    } else if (a && !isNaN(a) && operator !== '=' && !op && operator !== '.' && a.at(-1) !== '.') {
         op = operator;
     } else if (!b && operator === '-') {
         b += '-';
     } else if ((!b || b === '-') && op && operator === '.') {
-        b += "0.";
+        b += ".";
     } else if (b && !isNaN(b) && operator === '.' && !b.includes('.')) {
         b += '.';
-    } else if (b && !isNaN(b)) {
+    } else if (b && !isNaN(b) && b.at(-1) !== '.') {
         try {
             let result = operate(op, Number.parseFloat(a), Number.parseFloat(b));
             a = result.toString();
