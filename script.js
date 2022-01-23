@@ -7,39 +7,54 @@ function appendOperator(e) {
     let operator = buttonOperMap.get(e.target.id);
     let error = document.querySelector('#error');
 
-    if (!a && operator === '-') {
-        a += '-';
-        clearError();
+    if (operator === '-') {
+        appendMinus();
     } else if ((!a || a === '-') && operator === '.') {
         a += "."
     } else if (a && !isNaN(a) && !op && operator === '.' && !a.includes('.')) {
         a += '.';
     } else if (a && !isNaN(a) && operator !== '=' && !op && operator !== '.' && a.at(-1) !== '.') {
         op = operator;
-    } else if (!b && operator === '-') {
-        b += '-';
     } else if ((!b || b === '-') && op && operator === '.') {
         b += ".";
     } else if (b && !isNaN(b) && operator === '.' && !b.includes('.')) {
         b += '.';
     } else if (b && !isNaN(b) && b.at(-1) !== '.') {
-        try {
-            let result = operate(op, Number.parseFloat(a), Number.parseFloat(b));
-            a = result.toString();
-            if (operator !== '=') {
-                op = operator;
-            } else {
-                op = '';
-            }
-            b = '';
-        } catch (err) {
-            error.textContent = 'Error: Division by Zero!';
-        }
+        evaluateExpression(operator);
     } else {
         error.textContent = 'Error: Malformed Expression!';
     }
 
     updateDisplay();
+}
+
+function evaluateExpression(operator) {
+    try {
+        let result = operate(op, Number.parseFloat(a), Number.parseFloat(b));
+        a = result.toString();
+        if (operator !== '=') {
+            op = operator;
+        } else {
+            op = '';
+        }
+        b = '';
+    } catch (err) {
+        error.textContent = 'Error: Division by Zero!';
+    }
+}
+
+function appendMinus() {
+    if (!a) {
+        a += '-';
+    } else if (!op) {
+        op = '-';
+    } else if (!b) {
+        b += '-';
+    } else if (!isNaN(b) && b.at(-1) !== '.') {
+        evaluateExpression('-');
+    } else {
+        throw new Error("Error: Malformed Expression cause by Minus!");
+    }
 }
 
 function appendNumber(e) {
