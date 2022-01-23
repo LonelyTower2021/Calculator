@@ -2,7 +2,7 @@ let a = '';
 let op = '';
 let b = '';
 
-function evaluateOperator(e) {
+function appendOperator(e) {
     clearError();
     let operator = buttonOperMap.get(e.target.id);
     let error = document.querySelector('#error');
@@ -42,7 +42,7 @@ function evaluateOperator(e) {
     updateDisplay();
 }
 
-function appendNumButton(e) {
+function appendNumber(e) {
     let number = buttonNumMap.get(e.target.id);
     if (!op) {
         a += number;
@@ -63,7 +63,7 @@ function clearError() {
     error.textContent = '';
 }
 
-function clearDisplay(e) {
+function clearValues(e) {
     a = '';
     op = '';
     b = '';
@@ -71,7 +71,7 @@ function clearDisplay(e) {
     clearError();
 }
 
-function popDisplay(e) {
+function popValues(e) {
     if (b) {
         b = b.slice(0, -1);
     } else if (op) {
@@ -167,14 +167,14 @@ let buttonFuncMap = new Map([
 let buttons = document.querySelectorAll('.button');
 buttons.forEach(button => {
     if (buttonNumMap.has(button.id)) {
-        button.addEventListener('click', appendNumButton);
+        button.addEventListener('click', appendNumber);
     } else if (buttonOperMap.has(button.id)) {
-        button.addEventListener('click', evaluateOperator);
+        button.addEventListener('click', appendOperator);
     } else if (buttonFuncMap.has(button.id)) {
         if (button.id === 'button_C') {
-            button.addEventListener('click', clearDisplay);
+            button.addEventListener('click', clearValues);
         } else {
-            button.addEventListener('click', popDisplay);
+            button.addEventListener('click', popValues);
         }
     } else {
     }
