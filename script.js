@@ -4,7 +4,13 @@ let b = '';
 
 function appendOperator(e) {
     clearError();
-    let operator = buttonOperMap.get(e.target.id);
+    let operator = '';
+    if (e.type === "keydown") {
+        let button_id = `button_${e.key}`;
+        operator = buttonOperMap.get(button_id);
+    } else {
+        operator = buttonOperMap.get(e.target.id);
+    }
     let error = document.querySelector('#error');
 
     if (operator === '-') {
@@ -31,17 +37,22 @@ function appendOperator(e) {
 }
 
 function evaluateExpression(operator) {
+    let errorFlag = false;
     try {
         let result = operate(op, Number.parseFloat(a), Number.parseFloat(b));
         a = result.toString();
+    } catch (err) {
+        error.textContent = 'Error: Division by Zero!';
+        errorFlag = true;
+    }
+
+    if (!errorFlag) {
         if (operator !== '=') {
             op = operator;
         } else {
             op = '';
         }
         b = '';
-    } catch (err) {
-        error.textContent = 'Error: Division by Zero!';
     }
 }
 
@@ -74,7 +85,14 @@ function appendMinus() {
 }
 
 function appendNumber(e) {
-    let number = buttonNumMap.get(e.target.id);
+    let number = '';
+    if (e.type === "keydown") {
+        let button_id = `button_${e.key}`;
+        number = buttonNumMap.get(button_id);
+    } else {
+        number = buttonNumMap.get(e.target.id);
+    }
+
     if (!op) {
         a += number;
     } else {
@@ -207,6 +225,21 @@ buttons.forEach(button => {
         } else {
             button.addEventListener('click', popValues);
         }
-    } else {
     }
 });
+
+function appendKeyboardValue(e) {
+    console.log(e);
+    let button_id = `button_${e.key}`;
+    if (buttonNumMap.has(button_id)) {
+        appendNumber(e);
+    } else if (buttonOperMap.has(button_id)) {
+        appendOperator(e);
+    } else if (e.key === 'Backspace') {
+        popValues(e);
+    } else if (e.key === 'Escape') {
+        clearValues(e);
+    }
+}
+
+document.addEventListener('keydown', appendKeyboardValue);
