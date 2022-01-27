@@ -229,7 +229,6 @@ buttons.forEach(button => {
 });
 
 function appendKeyboardValue(e) {
-    console.log(e);
     let button_id = `button_${e.key}`;
     if (buttonNumMap.has(button_id)) {
         appendNumber(e);
