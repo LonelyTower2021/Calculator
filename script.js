@@ -200,12 +200,12 @@ let buttonNumMap = new Map([
 ]);
 
 let buttonOperMap = new Map([
-    ["button_/", "/"],
-    ["button_*", "*"],
-    ["button_-", "-"],
-    ["button_+", "+"],
-    ["button_=", "="],
-    ["button_.", "."],
+    ["button_divide", "/"],
+    ["button_multiply", "*"],
+    ["button_subtract", "-"],
+    ["button_addition", "+"],
+    ["button_equals", "="],
+    ["button_decimal", "."],
 ]);
 
 let buttonFuncMap = new Map([
@@ -242,3 +242,19 @@ function appendKeyboardValue(e) {
 }
 
 document.addEventListener('keydown', appendKeyboardValue);
+
+buttons.forEach(button => {
+    button.addEventListener('mousedown', changeColor);
+    button.addEventListener('mouseup', revertColor);
+});
+
+function changeColor(e){
+    let button_id = e.target.id;
+    let button = document.querySelector(`#${button_id}`);
+    button.style.background = 'rgb(50,50,50)';
+}
+function revertColor(e){
+    let button_id = e.target.id;
+    let button = document.querySelector(`#${button_id}`);
+    button.style.background = 'darkgrey';
+}
